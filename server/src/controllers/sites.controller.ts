@@ -4,6 +4,8 @@ import { postsitesService } from "../services/sitesService";
 import { asynHandler } from "../utils/asynHandler";
 import { Request, Response } from "express";
 import { url } from "node:inspector";
+import { addToCrawlQuee } from "../bullmq/producer/producer";
+import { crawlSite } from "../services/crawlSite";
 
 export const postSites = asynHandler(async(req:Request,res:Response)=>{
 
@@ -14,6 +16,7 @@ export const postSites = asynHandler(async(req:Request,res:Response)=>{
     }
 
     const site = await postsitesService(url,ownerId);
+
 
 
 
@@ -94,4 +97,28 @@ export const getMySites = asynHandler(async(req:Request,res:Response)=>{
     const sites = await Site.find({ownerId});
 
     res.status(200).json({sites})
+})
+
+
+export const crawlSiteController = asynHandler(async(req:Request,res:Response)=>{
+    const {siteId} = req.params;
+
+    if(!siteId){
+        return res.status(400).json({message:"siteId is required"})
+    }
+
+
+   
+    if(Array.isArray(siteId)){
+        return res.status(400).json({message:"siteId must be a string"})
+    }
+
+    await addToCrawlQuee(siteId);
+
+  
+
+
+  
+    res.status(200).json({message:"Site added to crawl queue"})
+
 })

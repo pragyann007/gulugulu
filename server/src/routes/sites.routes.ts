@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { getMySites, postSites, verifySite } from "../controllers/sites.controller";
+import { crawlSiteController, getMySites, postSites, verifySite } from "../controllers/sites.controller";
 
 export const sitesRouter = Router();
 
@@ -11,3 +11,4 @@ sitesRouter.get("/", (req, res) => {
 sitesRouter.post("/index",postSites);
 sitesRouter.post("/verify/:siteId",verifySite);
 sitesRouter.get("/:ownerId",getMySites);
+sitesRouter.get("/crawl/:siteId",crawlSiteController)

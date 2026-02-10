@@ -5,12 +5,18 @@ import morgan from 'morgan';
 import cookieParser from 'cookie-parser';
 import cors from 'cors';
 import { connectDB } from './configs/db';
+import './bullmq/worker/worker'; 
+import { worker } from './bullmq/worker/worker';
 
 const app = express();
 const PORT = 3001;
 
 connectDB()
 
+console.log("🟢 Worker starting...");
+
+
+worker();
 // Middleware to log requests
 app.use(morgan('tiny'));
 
