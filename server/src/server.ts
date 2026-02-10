@@ -2,17 +2,33 @@
 
 import express from 'express';
 import morgan from 'morgan';
+import cookieParser from 'cookie-parser';
+import cors from 'cors';
+import { connectDB } from './configs/db';
 
 const app = express();
-const PORT = 3000;
+const PORT = 3001;
+
+connectDB()
 
 // Middleware to log requests
 app.use(morgan('tiny'));
 
+// setup cors
+app.use(cors({
+  origin: 'http://localhost:3000', // allow requests from this origin
+  credentials: true, // allow cookies to be sent
+}));
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+app.use(cookieParser());
 // Route for the root path
 app.get('/', (req, res) => {
   res.json({ message: 'Hello World!' });
 });
+
+app.use('/api/auth', require('./routes/auth.routes').default);
+app.use('/api/sites', require('./routes/sites.routes').sitesRouter);
 
 // Start the server
 app.listen(PORT, () => {
